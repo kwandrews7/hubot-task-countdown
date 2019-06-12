@@ -1,0 +1,30 @@
+{
+  "name": "hubot-task-countdown",
+  "version": "1.0.0",
+  "description": "A hubot script for announcing task countdowns and allowing user snoozing. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwandrews7/hubot-task-countdown.git"
+  },
+  "keywords": [
+    "hubot",
+    "hubot-scripts",
+    "task",
+    "countdown",
+    "task-countdown",
+    "hubot-task-countdown",
+    "alarm",
+    "channel alarm",
+    "snooze"
+  ],
+  "author": "Kyle Andrews <https://github.com/kwandrews7>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kwandrews7/hubot-task-countdown/issues"
+  },
+  "homepage": "https://github.com/kwandrews7/hubot-task-countdown#readme"
+}
