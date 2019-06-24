@@ -29,8 +29,8 @@ const yargs = require('yargs')
         alias: 'name',
         description: 'Name of the timer.'
     })
-    .option('s', {
-        alias: 'seconds',
+    .option('t', {
+        alias: 'time',
         description: 'Length of timer in seconds.',
         default: process.env.HUBOT_TASK_DEFAULT_SECONDS || '300'
     })
@@ -47,6 +47,8 @@ const yargs = require('yargs')
         type: 'boolean'
     });
 
+var jobs = [];
+
 module.exports = function (robot) {
 
     if (!robot.brain.data.task_countdown) {
@@ -56,10 +58,22 @@ module.exports = function (robot) {
     robot.respond(/start timer/i, function (msg) {
         robot.logger.debug("HERE!!!");
         let parsedYargs = yargs.parse(msg.message.text);
-        msg.send(`Name: ${parsedYargs.name}`);
-        msg.send(`Seconds: ${parsedYargs.seconds}`);
-        msg.send(`Message: ${parsedYargs.message}`);
-        msg.send(`Announce: [Channel:${parsedYargs.channel === true}] [Here:${parsedYargs.here === true}]`);
+        let date = new Date(Date.now() + (parsedYargs.time * 1000));
+        schedule.scheduleJob(date, function() {
+            var response = [];
+            if (parsedYargs.channel) {
+                response.push('@channel')
+            }
+            if (parsedYargs.here) {
+                response.push('@here')
+            }
+            response.push(`Timer [${parsedYargs.name}] has elapsed!`);
+            if (parsedYargs.message) {
+                response.push(parsedYargs.message);
+            }
+            msg.send(`${response.join('\n')}`);
+        });
+        msg.send(`Timer [${parsedYargs.name}] has started and will expire in ${parsedYargs.time}s.`);
     });
 
     robot.respond(/snooze timer/i, function (msg) {
@@ -69,14 +83,14 @@ module.exports = function (robot) {
     robot.respond(/timer help/i, function (msg) {
         let help = [
             'Example Usage: Start 15 minute timer for deploying a new version into UAT.',
-            '`jarvis start timer -n "Deploy v2 to UAT" -t 900 -m "UAT is currently preparing for a deployment. Exit all sessions immediately."',
-            '',
-            'Options:',
+            '`jarvis start timer -n "Deploy v2 to UAT" -t 900 -m "UAT is currently preparing for a deployment. Exit all sessions immediately."`',
+            '```Options:',
             '-n, --name     Name of the timer.',
-            '-s, --seconds  Length of timer in seconds.',
+            '-t, --time     Length of timer in seconds.',
             '-m, --message  Message to be sent when timer is complete.',
-            '--channel      Announce timer completion using `@channel` tag.',
-            '--here         Announce timer completion using `@here` tag.'
+            '--channel      Announce timer completion using @channel tag.',
+            '--here         Announce timer completion using @here tag.```'
         ]
+        msg.send(help.join('\n'));
     });
 };
